@@ -1,1 +1,49 @@
+Translater script for awesome
+
+Feature:
+======================
+Translater scripts make for translate english word to russian in awesome wm (you may run it in terminal).
+On Mod+d button - rise popup whith translate of selected word.
+
+
+It bind on "Mod+d" button, it read english word from primary buffer (you need just selected word with mouse) and rise popup with translate.
+Unknown (new) word get from http://m.translate.ru/
+After get word from web, it automatically add to dictionary ~/dict.dct in following format, one word per line
+
+	WORD==ПЕРЕВОД1, ПЕРЕВОД2, ПЕРЕВОД3,...$$RAITING
+	
+Each word in dictionary has own raiting (end of word line).
+Raiting may considered in another tool for learning word.
+
+Installation
+======================
+Simply run:
+$ sudo make install
+
+Run
+======================
+1) select word to translate and press Mod+d key
+
+2) for test or terminal use run:
+get_translate WORD_TO_TRANSLATE
+
+Configure
+======================
+For bind script on "Mod+d" and rise popup with result 
+add this lines to you rc.lua file in section "globalkeys = awful.util.table.join()"
+
+		awful.key({ modkey,						}, "d", 
+							function ()
+								local fr = awful.util.pread("/usr/local/bin/translater/get_translate")
+								naughty.notify({  text = fr, timeout = 15 })
+							end)
+
+Usage
+======================
+Mod+d - rise popup whith translate of selected word
+
+Todo
+======================
+1) add second direction rus->eng
+2) do more smartly parser input word (remove whitespase and another)
 
