@@ -1,0 +1,48 @@
+#!/usr/bin/env perl
+use strict;         # show warnings
+use LWP::Simple;    # library to get URL
+#use pragma { no warnings; print ... };
+use utf8;
+use open qw(:std :utf8);
+
+# link to get translate. we will replace ##TEXT## by our word later
+my $link = 'http://m.translate.ru/dictionary/result/?text=##TEXT##&dirCode=##DIRECT##';
+# get word to translate
+my $word = shift;
+# die if no word in param
+die "Please, enter word to translate\n" unless $word;
+
+# replace in link translate directions 
+if ($word =~m/[a-zA-Z]+/) {
+$link =~ s/##DIRECT##/er/;
+} else {
+$link =~ s/##DIRECT##/re/;
+}
+
+# replace ##TEXT## in link by entered word
+$link =~ s/##TEXT##/$word/;
+# get page
+my $content = get($link);
+# die if no content
+die print "ERROR! Couldn't get web page" unless defined $content;
+
+$content =~ s/\n//g; #удаляем переносы строк, чтоб вести поиск по единой строке (в html они имеют место быть)
+
+# prepare array for results
+my @results = ();
+# parse page class="ref_result"
+while ($content =~ /<span\sclass="ref_result">(.*?)<\/span>/igm) {
+    # get matched value (between "<P class=L1>" and "</P>")
+    my $result = $1;
+    # strip all html tags in result
+    $result =~ s/<[^>]+>//g;
+		$result =~ s/\x{2013}//g;  # get rid of non-ASCII characters
+    # push result string in result array
+    print "$result";
+		#push @results, $result;
+}
+
+#foreach my $result (@results) {
+#    print $result;
+#}
+

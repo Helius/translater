@@ -1,12 +1,12 @@
 ============ BUGS ===========
 
-If word get from web - popup's text contain unnecessary \n
 
 ============ TODO ===========
 
-do input word parser more smartly :D
 
 ============ LOG ============
+13.07.2010
+parser was improving (now remov all non-char symbols like *(^%$#@ )
 13.07.2010
 fix bug with twice "\n" in web result on popup
 13.07.2010

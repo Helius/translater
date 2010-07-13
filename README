@@ -5,50 +5,52 @@ Feature:
 Translater scripts with awesome wm is lightweight and symply tool for translate rus word to eng and backwards, 
 but need internet connection for get unknown word.
 
-On Mod+d button - rise popup whith translate of selected word. Also you may use it in terminal.
+On Mod4+d button - rise popup whith translate of selected word. Also you may use it in terminal.
 
-Script bind on "Mod+d" button, it read word from primary buffer (you need just selected word with mouse) and rise popup with translate.
+Script bind on "Mod4+d" button, it read word from primary buffer (you need just selected word with mouse) and rise popup with translate.
 Unknown (new) word get from http://m.translate.ru/
-After get word from web, it automatically add to dictionary ~/dict.dct in following format, one word per line
+After get word from web, it automatically add to dictionary ~/.gtrans/dict.dct in following format, one word per line
 
 	WORD==TRANSLATE1, TRANSLATE2, TRANSLATE3,...$$RAITING
 	
 Each word in dictionary has own raiting (at end of line).
 Raiting may considered in another tool for learning word.
 
-"get_translate" calls "translate" for get translate for word from web, and return result in awesome environment,
-there is way to use any translate tool for get one language word to another language.
+"gtrans" calls "gwebtrans" for get translate the word from web, and return result in awesome environment,
+there is way to use another translate tool (if you write support this :D).
 
 Installation
 ======================
 Simply run:
 $ sudo make install
 
+After installing two script gtrans and gwebtrans was plasing to /usr/local/bin/ dirrectory, and dictionary placing to ~/.gtrans/dict.dct
+
 Run
 ======================
-1) select word to translate and press Mod+d key
+1) select word to translate and press Mod4+d key
 
 2) for test or terminal just select word with mouse and run:
-$ get_translate
+$ gtrans
 
 Configure
 ======================
-For bind script on "Mod+d" and rise popup with result 
+For bind script on "Mod4+d" and rise popup with result 
 add this lines to you rc.lua file in section "globalkeys = awful.util.table.join()"
 
 		awful.key({ modkey,						}, "d", 
 							function ()
-								local fr = awful.util.pread("/usr/local/bin/translater/get_translate")
+								local fr = awful.util.pread("/usr/local/bin/gtrans")
 								naughty.notify({  text = fr, timeout = 15 })
 							end)
 
 Usage
 ======================
-Mod+d - rise popup whith translate of selected word
+Mod4+d - rise popup whith translate of selected word
 
 Todo
 ======================
-1) do more smartly selected word parser (remove whitespase and etc)
+nothing todo :D
 
 Enjoy!
 mailto: ghelius@gmail.com
