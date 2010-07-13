@@ -6,7 +6,7 @@ Translater scripts make for translate english word to russian in awesome wm (you
 On Mod+d button - rise popup whith translate of selected word.
 
 
-It bind on "Mod+d" button, it read english word from primary buffer (you need just selected word with mouse) and rise popup with translate.
+Script bind on "Mod+d" button, it read english word from primary buffer (you need just selected word with mouse) and rise popup with translate.
 Unknown (new) word get from http://m.translate.ru/
 After get word from web, it automatically add to dictionary ~/dict.dct in following format, one word per line
 
