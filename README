@@ -2,18 +2,22 @@ Translater script for awesome
 
 Feature:
 ======================
-Translater scripts make for translate english word to russian in awesome wm (you may run it in terminal).
-On Mod+d button - rise popup whith translate of selected word.
+Translater scripts with awesome wm is lightweight and symply tool for translate rus word to eng and backwards, 
+but need internet connection for get unknown word.
 
+On Mod+d button - rise popup whith translate of selected word. Also you may use it in terminal.
 
-Script bind on "Mod+d" button, it read english word from primary buffer (you need just selected word with mouse) and rise popup with translate.
+Script bind on "Mod+d" button, it read word from primary buffer (you need just selected word with mouse) and rise popup with translate.
 Unknown (new) word get from http://m.translate.ru/
 After get word from web, it automatically add to dictionary ~/dict.dct in following format, one word per line
 
-	WORD==ПЕРЕВОД1, ПЕРЕВОД2, ПЕРЕВОД3,...$$RAITING
+	WORD==TRANSLATE1, TRANSLATE2, TRANSLATE3,...$$RAITING
 	
-Each word in dictionary has own raiting (end of word line).
+Each word in dictionary has own raiting (at end of line).
 Raiting may considered in another tool for learning word.
+
+"get_translate" calls "translate" for get translate for word from web, and return result in awesome environment,
+there is way to use any translate tool for get one language word to another language.
 
 Installation
 ======================
@@ -24,8 +28,8 @@ Run
 ======================
 1) select word to translate and press Mod+d key
 
-2) for test or terminal use run:
-get_translate WORD_TO_TRANSLATE
+2) for test or terminal just select word with mouse and run:
+$ get_translate
 
 Configure
 ======================
@@ -44,6 +48,7 @@ Mod+d - rise popup whith translate of selected word
 
 Todo
 ======================
-1) add second direction rus->eng
-2) do more smartly parser input word (remove whitespase and another)
+1) do more smartly selected word parser (remove whitespase and etc)
 
+Enjoy!
+mailto: ghelius@gmail.com

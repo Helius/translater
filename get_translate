@@ -3,10 +3,10 @@
 # словарь используется для ранее переводимых слов
 # перевод запрашивается внешним скриптом, сохраняется в словарь
 # Autor: Eugene Samoylov aka Helius, gHelius@gmail.com
-
+#use strict;
 use utf8;
 use open qw(:std :utf8);
-
+#use Cwd;
 
 # получить слово для перевода из буфера обмена
 my $word = `xclip -o` || die print "ERROR! xclip not found, you need install it: sudo aptitude install xclip";
@@ -17,14 +17,22 @@ if (!length($word)) {
 }
 
 # проверить что это одно слово без лишних знаков
-if ($word =~m/([^-a-zA-Z]+)/) {
-	 die print "ERROR! $word содержит лишние символы: \"$1\"\n";
-}
+if ($word =~m/[^-a-zA-Z]+/) {
+	# встречаются не английские
+	if ($word =~m/[^-а-яА-Я]+/) {
+		# встречаются не русские
+		die print "ERROR! $word содержит лишние символы\n";
+	} else {
+		# только русские
+	}
+} else {
+	# только английские
+} 
 
 $word = lc($word);	# преобразуем все буквы в строчные
 
 print "$word\n";
-$rus_text = "a";
+$trl_text = "a";
 
 # попробовать найти это слово в файле
 chdir;
@@ -34,35 +42,40 @@ unless ( open InFile, "dict.dct" ) {
 }
 
 while ($line = <InFile>) {
-		if($line=~m/$word/) {
+		if($line=~m/^$word\=\=/) {
 			$line=~m/.*\=\=(.*?)\$\$/; 
 			$temp = $1;
 			$temp=~s/, /\n/g;
-			$rus_text = "_yes_";
+			$trl_text = "_yes_";
 			print "\n";
+			chomp($temp);
 			print "$temp";
 			last;
 			
 		} else {
-			$rus_text = "_no_";
+			$trl_text = "_no_";
 		}
   }
 close(InFile);
 
-if ($rus_text =~m/_yes_/) {					# если слово найдено в словаре, возвращаем перевод и выходим
+chdir("/usr/local/bin/translater/");
+
+if ($trl_text =~m/_yes_/) {					# если слово найдено в словаре, возвращаем перевод и выходим
 } else {
-	$rus_text = `translate $word`;	# вызвать скрипт переводчика передав ему слово
-
-	# проверить на корректность перевода
-	if (length ($rus_text)) {			# если перевод имеет место быть - добавляем в словарь 
-		print "$rus_text";
+	$trl_text = `./translate $word`;	# вызвать скрипт переводчика передав ему слово
 	
-		$rus_text=~s/^[\n\t\r]+//;
-		$rus_text=~s/[\n\t\r]+/, /g;
+	# проверить на корректность перевода
+	if (length ($trl_text)) {					# если перевод имеет место быть - добавляем в словарь 
 
+		print "$trl_text";
+		$trl_text=~s/^[\n\t\r]+//;			# удалить перенос в начале строки
+		$trl_text=~s/[\n\t\r]+/, /g;		# заменить переносы строки на запятую с пробелом - для записи в файл одной строкой
+		
+		
 
+chdir;
 		open(FILE,">> dict.dct");
-		print(FILE "$word==$rus_text\$\$0\n");
+		print(FILE "$word==$trl_text\$\$0\n");
 		close(FILE);
 	} else {
 		print "Перевод не найден";

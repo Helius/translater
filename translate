@@ -6,11 +6,18 @@ use utf8;
 use open qw(:std :utf8);
 
 # link to get translate. we will replace ##TEXT## by our word later
-my $link = 'http://m.translate.ru/dictionary/result/?text=##TEXT##&dirCode=er';
+my $link = 'http://m.translate.ru/dictionary/result/?text=##TEXT##&dirCode=##DIRECT##';
 # get word to translate
 my $word = shift;
 # die if no word in param
 die "Please, enter word to translate\n" unless $word;
+
+# replace in link translate directions 
+if ($word =~m/[a-zA-Z]+/) {
+$link =~ s/##DIRECT##/er/;
+} else {
+$link =~ s/##DIRECT##/re/;
+}
 
 # replace ##TEXT## in link by entered word
 $link =~ s/##TEXT##/$word/;
@@ -29,12 +36,13 @@ while ($content =~ /<span\sclass="ref_result">(.*?)<\/span>/igm) {
     my $result = $1;
     # strip all html tags in result
     $result =~ s/<[^>]+>//g;
-	$result =~ s/\x{2013}//g;  # get rid of non-ASCII characters
+		$result =~ s/\x{2013}//g;  # get rid of non-ASCII characters
     # push result string in result array
-    push @results, $result;
+    print "$result\n";
+		#push @results, $result;
 }
 
-foreach my $result (@results) {
-    print $result;
-}
+#foreach my $result (@results) {
+#    print $result;
+#}
 
