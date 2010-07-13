@@ -6,7 +6,6 @@
 #use strict;
 use utf8;
 use open qw(:std :utf8);
-#use Cwd;
 
 # получить слово для перевода из буфера обмена
 my $word = `xclip -o` || die print "ERROR! xclip not found, you need install it: sudo aptitude install xclip";
@@ -31,7 +30,7 @@ if ($word =~m/[^-a-zA-Z]+/) {
 
 $word = lc($word);	# преобразуем все буквы в строчные
 
-print "$word\n";
+print "$word\n";		# выводим входное слово
 $trl_text = "a";
 
 # попробовать найти это слово в файле
@@ -42,15 +41,15 @@ unless ( open InFile, "dict.dct" ) {
 }
 
 while ($line = <InFile>) {
-		if($line=~m/^$word\=\=/) {
-			$line=~m/.*\=\=(.*?)\$\$/; 
+		if($line=~m/^$word\=\=/) {			# если слово есть
+			$line=~m/.*\=\=(.*?)\$\$/;		# выбираем из строки перевод
 			$temp = $1;
-			$temp=~s/, /\n/g;
+			$temp=~s/, /\n/g;							# заменяем запятые на перенос строки
 			$trl_text = "_yes_";
 			print "\n";
 			chomp($temp);
 			print "$temp";
-			last;
+			last;													# выходим если нашли перевод
 			
 		} else {
 			$trl_text = "_no_";
@@ -58,7 +57,7 @@ while ($line = <InFile>) {
   }
 close(InFile);
 
-chdir("/usr/local/bin/translater/");
+chdir("/usr/local/bin/translater/");# устанавливаем директорию на текущую, чтоб вызвать скрипт переводчика
 
 if ($trl_text =~m/_yes_/) {					# если слово найдено в словаре, возвращаем перевод и выходим
 } else {
@@ -71,9 +70,8 @@ if ($trl_text =~m/_yes_/) {					# если слово найдено в слов
 		$trl_text=~s/^[\n\t\r]+//;			# удалить перенос в начале строки
 		$trl_text=~s/[\n\t\r]+/, /g;		# заменить переносы строки на запятую с пробелом - для записи в файл одной строкой
 		
-		
 
-chdir;
+chdir;															# устанавливаем дирректорию на домашнию, для доступа к файлу словаря
 		open(FILE,">> dict.dct");
 		print(FILE "$word==$trl_text\$\$0\n");
 		close(FILE);
@@ -81,6 +79,4 @@ chdir;
 		print "Перевод не найден";
 	}
 }
-
-
 
