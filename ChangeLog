@@ -1,8 +1,13 @@
-============ TODO ============
+============ BUGS ===========
 
-add second direction rus->eng for translate
+If word get from web - popup's text contain unnecessary \n
+
+============ TODO ===========
+
+do input word parser more smartly :D
 
 ============ LOG ============
-
 13.07.2010
-first release of script
+add second translate direction (rus->eng)
+13.07.2010
+first release of script (eng-rus)
