@@ -38,7 +38,7 @@ while ($content =~ /<span\sclass="ref_result">(.*?)<\/span>/igm) {
     $result =~ s/<[^>]+>//g;
 		$result =~ s/\x{2013}//g;  # get rid of non-ASCII characters
     # push result string in result array
-    print "$result\n";
+    print "$result";
 		#push @results, $result;
 }
 

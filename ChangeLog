@@ -8,6 +8,8 @@ do input word parser more smartly :D
 
 ============ LOG ============
 13.07.2010
+fix bug with twice "\n" in web result on popup
+13.07.2010
 add second translate direction (rus->eng)
 13.07.2010
 first release of script (eng-rus)
