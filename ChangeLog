@@ -5,6 +5,8 @@
 
 
 ============ LOG ============
+14.07.2010
+fix problem with create ~/.gtrans/dict.dct (gtrans can't access to dictionary, wrong file atributte)
 13.07.2010
 parser was improving (now remov all non-char symbols like *(^%$#@ )
 13.07.2010

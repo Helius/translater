@@ -50,7 +50,7 @@ unless (-e ".gtrans/dict.dct") {				# проверить существован�
 	mkdir ".gtrans/";
 	my $param = O_CREAT;
 	unless (sysopen(FH, ".gtrans/dict.dct", $param)){
-		print "Немогу создать файл словаря ~/.gtrans/dict.dct";
+		print "\nНемогу создать файл словаря ~/.gtrans/dict.dct";
 		close(FH);
 		die @!;
 	}
