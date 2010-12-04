@@ -63,7 +63,7 @@ my @f=<InFile>;
 close (InFile);
 open F, '>.gtrans/dict.dct';
 
-while (my $line = <InFile>) {
+foreach my $line (@f) {
 		if($line=~m/^$word\=\=/) {				# если слово есть
 			
 			$line=~m/\$\$([0-9]+)$/;				# получаем значение счетчика
