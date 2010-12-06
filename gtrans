@@ -76,7 +76,7 @@ foreach my $line (@f) {
 			$trl_text = "1";
 			print "\n";
 			chomp($temp);
-			print "$temp";
+			print "$temp \n\($ind\)";
 #			last;														# выходим если нашли перевод
 		} 
 	print (F $line);
