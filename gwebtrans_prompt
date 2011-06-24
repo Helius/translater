@@ -6,7 +6,8 @@ use utf8;
 use open qw(:std :utf8);
 
 # link to get translate. we will replace ##TEXT## by our word later
-my $link = 'http://m.translate.ru/dictionary/result/?text=##TEXT##&dirCode=##DIRECT##';
+#my $link = 'http://m.translate.ru/dictionary/result/?text=##TEXT##&dirCode=##DIRECT##';
+my $link = 'http://m.translate.ru/services/MobileService.asmx/TranslateText4Touch?direction=##DIRECT##&template=General&text=##TEXT##&intLang=ru';
 # get word to translate
 my $word = shift;
 # die if no word in param
@@ -27,22 +28,16 @@ my $content = get($link);
 die print "ERROR! Couldn't get web page" unless defined $content;
 
 $content =~ s/\n//g; #удаляем переносы строк, чтоб вести поиск по единой строке (в html они имеют место быть)
-
 # prepare array for results
 my @results = ();
-# parse page class="ref_result"
-while ($content =~ /<span\sclass="ref_result">(.*?)<\/span>/igm) {
-    # get matched value (between "<P class=L1>" and "</P>")
-    my $result = $1;
-    # strip all html tags in result
-    $result =~ s/<[^>]+>//g;
-		$result =~ s/\x{2013}//g;  # get rid of non-ASCII characters
-    # push result string in result array
-    print "$result";
-		#push @results, $result;
-}
 
-#foreach my $result (@results) {
-#    print $result;
-#}
+# check if it's phrase
+if ($content =~m/<isWord>false<\/isWord>/igm) {
+	$content =~m/<result>(.*)<\/result>/;
+	print $1;
+} else { # it's single world
+	while ($content =~ m/class="ref_result"&gt;(.*?)&lt;/ig) {
+		print $1, "\n";
+	}	
+}
 
