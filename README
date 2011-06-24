@@ -1,8 +1,8 @@
-Translater script for awesome
+Translater script for awesome WM (awesome.naquadah.org)
 
 Feature:
 ======================
-Translater scripts with awesome wm is lightweight and symply tool for translate rus word to eng and backwards, 
+Translater scripts with awesome wm is lightweight and simply tool for translate russian word and phrases to eng and backwards, 
 but need internet connection for get unknown word.
 
 On Mod4+d button - rise popup whith translate of selected word. Also you may use it in terminal.
@@ -24,7 +24,7 @@ Installation
 Simply run:
 $ sudo make install
 
-After installing two script gtrans and gwebtrans was plasing to /usr/local/bin/ dirrectory, and dictionary placing to ~/.gtrans/dict.dct
+After installing, both script 'gtrans' and 'gwebtrans_*' was placed to /usr/local/bin/ directory, and dictionary file placed to ~/.gtrans/dict.dct
 
 Run
 ======================
