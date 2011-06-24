@@ -1,0 +1,63 @@
+#!/usr/bin/env perl
+use utf8;
+use strict;         # show warnings
+
+binmode STDOUT, ":utf-8";
+binmode STDIN, ":utf-8";
+binmode STDERR, ":utf-8";
+
+# link to get translate. we will replace ##TEXT## by our word later
+my $link = 'http://translate.google.com/m?hl=en&##DIRECT##&ie=UTF-8&prev=_m&q=##TEXT##';
+# get word to translate
+my $word = shift;
+# die if no word in param
+die "Please, enter word to translate\n" unless $word;
+
+# replace in link translate directions 
+if ($word =~m/[a-zA-Z]+/) {
+$link =~ s/##DIRECT##/sl=en&tl=ru/;
+} else {
+$link =~ s/##DIRECT##/sl=ru&tl=en/;
+}
+
+# replace ##TEXT## in link by entered word
+$link =~ s/##TEXT##/$word/;
+
+use LWP::UserAgent;
+use HTTP::Request::Common qw(GET);
+use HTTP::Cookies;
+
+my $ua = LWP::UserAgent->new;
+
+# Define user agent type
+$ua->agent('Mozilla/8.0');
+
+# Request object
+my $req = GET $link;
+
+# Make the request
+my $res = $ua->request($req);
+my $content;
+# Check the response
+if ($res->is_success) {
+		$content = $res->content;
+} else {
+		print $res->status_line . "\n";
+		exit 1;
+}
+
+$content =~ s/\n//g; #удаляем переносы строк, чтоб вести поиск по единой строке (в html они имеют место быть)
+
+# prepare array for results
+my @results = ();
+# parse page class="ref_result"
+while ($content =~ /class="t0">(.*?)<\/div/igm) {
+    # get matched value (between "<P class=L1>" and "</P>")
+    my $result = $1;
+    # strip all html tags in result
+    $result =~ s/<[^>]+>//g;
+		$result =~ s/\x{2013}//g;  # get rid of non-ASCII characters
+    # push result string in result array
+    print "$result";
+		#push @results, $result;
+}
