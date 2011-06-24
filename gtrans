@@ -1,13 +1,11 @@
 #!/usr/bin/perl -w
+# Autor: Eugene Samoylov aka Helius, gHelius@gmail.com
 
 ######################### config sections ########################
+# what do transtate?
 my $translater_script = 'gwebtrans_prompt';
 ##################################################################
 
-# скрипт возвращающий перевод для слова находящегося в буфере
-# словарь используется для ранее переводимых слов
-# перевод запрашивается внешним скриптом, сохраняется в словарь
-# Autor: Eugene Samoylov aka Helius, gHelius@gmail.com
 use strict;
 use utf8;
 use open qw(:std :utf8);
@@ -15,100 +13,108 @@ use Fcntl ':flock'; # import LOCK_* constants
 use Fcntl qw(:DEFAULT :flock);
 
 
-# проверить что xclip существует
+# check that xclip exitst
 my $xclip_bin = `which xclip`;	
 chomp $xclip_bin;
 unless ($xclip_bin)
 {
-	print "Установите xclipt, sudo aptitude install xclip";
+	print "Please set up 'xclipt', \$sudo aptitude install xclip";
 	die "xclip not found"
 }
 
-# получить слово для перевода
+# get string from buffer
 my $word = `xclip -o`;
 
-# проверить что слово было получено
+# check what it's not empty
 unless ($word) {
-	print "ERROR! выделите слово для перевода";
-	die "word not select";
+	print "ERROR! Select world for translate!";
+	exit (1);
 }
 
 $word = lc $word;	# преобразуем все буквы в строчные
 $word=~s/^\W+//;	# удалить пробелы в начале слова
 $word=~s/\W+$//;
 # проверить что это одно слово без лишних знаков
-if ($word =~m/[^-a-z\s]+/) {
+if ($word =~m/[^-a-z'\s]+/) {
 	# встречаются не английские
-	if ($word =~m/[^-а-я]+/) {
+	if ($word =~m/([^-а-я\s]+)/) {
 		# встречаются не русские
-		die print "ERROR! $word содержит лишние символы\n";
+		die print "ERROR! $word contains bad symbols: '$1'\n";
 	}
-} 
+}
 
 print $word."\n";		# выводим входное слово
 
-my $trl_text = 0;
+my $its_phrase = 0;
+if ($word =~ m/\s/) {
+	$its_phrase = 1;
+	print `$translater_script "$word"`;
+} else {
+	my $trl_text = 0;
 
 # попробовать найти это слово в файле
-chdir;
-unless (-e ".gtrans/dict.dct") {				# проверить существование файла
-	printf "Файл словаря не найден, будет создан новый";
-	mkdir ".gtrans/";
-	my $param = O_CREAT;
-	unless (sysopen(FH, ".gtrans/dict.dct", $param)){
-		print "\nНемогу создать файл словаря ~/.gtrans/dict.dct";
-		close(FH);
-		die @!;
-	}
-	die "dictionary not found";
-}
-
-open (InFile,".gtrans/dict.dct");
-
-my @f=<InFile>; 
-close (InFile);
-open F, '>.gtrans/dict.dct';
-
-foreach my $line (@f) {
-		if($line=~m/^$word\=\=/) {				# если слово есть
-			
-			$line=~m/\$\$([0-9]+)$/;				# получаем значение счетчика
-			my $ind = $1;
-			++$ind;
-			$line=~s/\$\$([0-9]+)$/\$\$$ind/;		# инкрементируем счетчик
-			$line=~m/.*\=\=(.*?)\$\$/;			# выбираем из строки перевод
-			my $temp = $1;
-			$temp=~s/, /\n/g;								# заменяем запятые на перенос строки
-			$trl_text = "1";
-			print "\n";
-			chomp($temp);
-			print "$temp \n\($ind\)";
-#			last;														# выходим если нашли перевод
-		} 
-	print (F $line);
-  }
-close (F);
-
-unless ( $trl_text ) {							# если слово найдено в словаре, возвращаем перевод и выходим
-
-	$trl_text = `$translater_script "$word"`;				# вызвать скрипт переводчика передав ему слово
-	
-	# проверить на корректность перевода
-	if (length ($trl_text)) {					# если перевод имеет место быть - добавляем в словарь 
-		#$trl_text=~s/[a-zA-Zа-яА-Я][\n]//g;
-		print "$trl_text";
-		if($trl_text=~m/ERROR/) {			# если переводчик вернул ошибку - не пишем ее в файл
-			die "No translate from gwebtrans";
+	chdir;
+	unless (-e ".gtrans/dict.dct") {				# проверить существование файла
+		printf "Файл словаря не найден, будет создан новый";
+		mkdir ".gtrans/";
+		my $param = O_CREAT;
+		unless (sysopen(FH, ".gtrans/dict.dct", $param)){
+			print "\nНемогу создать файл словаря ~/.gtrans/dict.dct";
+			close(FH);
+			die @!;
 		}
-		$trl_text=~s/^[\n\t\r]+//;				# удалить перенос в начале строки
-		$trl_text=~s/[\n\t\r]+/, /g;			# заменить переносы строки на запятую с пробелом - для записи в файл одной строкой
+		die "dictionary not found";
+	}
+
+	open (InFile,".gtrans/dict.dct");
+
+	my @f=<InFile>; 
+	close (InFile);
+	open F, '>.gtrans/dict.dct';
+
+	foreach my $line (@f) {
+			if($line=~m/^$word\=\=/) {				# если слово есть
+				
+				$line=~m/\$\$([0-9]+)$/;				# получаем значение счетчика
+				my $ind = $1;
+				++$ind;
+				$line=~s/\$\$([0-9]+)$/\$\$$ind/;		# инкрементируем счетчик
+				$line=~m/.*\=\=(.*?)\$\$/;			# выбираем из строки перевод
+				my $temp = $1;
+				$temp=~s/, /\n/g;								# заменяем запятые на перенос строки
+				$trl_text = "1";
+				print "\n";
+				chomp($temp);
+				print "$temp \n\($ind\)";
+#			last;														# выходим если нашли перевод
+			} 
+		print (F $line);
+		}
+	close (F);
+
+	unless ( $trl_text ) {							# если слово найдено в словаре, возвращаем перевод и выходим
+
+		$trl_text = `$translater_script "$word"`;				# вызвать скрипт переводчика передав ему слово
 		
-		open(FILE,">> .gtrans/dict.dct");
-		print(FILE "$word\=\=$trl_text\$\$0\n");
-		close(FILE);
-	} else {
-		print "Перевод не найден";
+		# проверить на корректность перевода
+		if (length ($trl_text)) {					# если перевод имеет место быть - добавляем в словарь 
+			print "$trl_text";
+			if($trl_text=~m/ERROR/) {			# если переводчик вернул ошибку - не пишем ее в файл
+				die "No translate returned";
+			}
+			$trl_text=~s/^[\n\t\r]+//;				# удалить перенос в начале строки
+			$trl_text=~s/[\n\t\r]+/, /g;			# заменить переносы строки на запятую с пробелом - для записи в файл одной строкой
+			
+			open(FILE,">> .gtrans/dict.dct");
+			print(FILE "$word\=\=$trl_text\$\$0\n");
+			close(FILE);
+		} else {
+			print "Перевод не найден";
+		}
 	}
 }
+	
+
+
 
 
