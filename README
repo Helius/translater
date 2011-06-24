@@ -38,11 +38,10 @@ Configure
 For bind script on "Mod4+d" and rise popup with result 
 add this lines to you rc.lua file in section "globalkeys = awful.util.table.join()"
 
-		awful.key({ modkey,						}, "d", 
-							function ()
-								local fr = awful.util.pread("/usr/local/bin/gtrans")
-								naughty.notify({  text = fr, timeout = 15 })
-							end)
+awful.key ({ modkey, }, "d", function ()
+           local fr = awful.util.pread("/usr/local/bin/gtrans")
+           naughty.notify({  text = fr, timeout = 15 })
+					 end)
 
 Usage
 ======================

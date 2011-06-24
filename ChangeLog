@@ -5,6 +5,9 @@
 
 
 ============ LOG ============
+24.06.2011 22:16
+revrite: gwebtrans to gwebtrans_prompt for new format web page, and add gwebtranse_mgoogle for google mobile (google mobile translater sucks!)
+add feature: now possible to transalte phrases, but it's not saved to dictionary
 14.07.2010
 fix problem with create ~/.gtrans/dict.dct (gtrans can't access to dictionary, wrong file atributte)
 13.07.2010
